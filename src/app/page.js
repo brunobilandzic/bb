@@ -1,5 +1,6 @@
-import Lakmus from "@/components/Lakmus";
-import Image from "next/image";
+import Posts from "../../components/Posts";
+import AuthSection from "../../components/Auth";
+
 
 export default function Home() {
   
@@ -8,9 +9,9 @@ export default function Home() {
       <h1 className="text-4xl font-bold">
         Welcome to Bruno&apos;s personal website
       </h1>
-      <Image src="/vespa_cut.png" alt="Vespa" width={300} height={300} />
-      <Lakmus />
-     
+      {/*<Image src="/vespa_cut.png" alt="Vespa" width={300} height={300} /> */}
+      <Posts />
+      <AuthSection />
     </main>
   );
 }
