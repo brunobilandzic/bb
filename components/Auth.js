@@ -1,9 +1,10 @@
 "use client";
 
-import { UserContext } from "./ClientWrapper";
+import { UserContext } from "./wrappers/ClientWrapper";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect, useContext } from "react";
 import classnames from "classnames";
+import { useSelector } from "react-redux";
 
 export const SignInComponent = ({ classes }) => {
   const classString = classnames("text-green-900", classes);
@@ -29,22 +30,16 @@ export const SignOutComponent = ({ classes }) => {
 };
 
 export default function AuthSection() {
-  const { data: session } = useSession();
-  const { user, setUser } = useContext(UserContext);
-
-  useEffect(() => {
-    if (session) {
-      setUser(session.user);
-    }
-  }, [session]);
+  const user = useSelector((state) => {
+    return state.userState?.user;
+  });
 
   return (
     <div className="flex flex-col gap-2 align-middle">
-      {user && <p className="text-2xl font-bold">{user.name}</p>}
-      {!session && (
+      {!user && (
         <SignInComponent classes="bg-green-50 text-green-500 border-green-900 border py-1 mx-auto w-24 rounded-sm" />
       )}
-      {session && (
+      {user && (
         <SignOutComponent classes="bg-red-50 text-red-500 border-red-900 border py-1 mx-auto w-24 rounded-sm" />
       )}
     </div>

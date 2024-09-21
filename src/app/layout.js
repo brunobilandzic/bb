@@ -1,8 +1,5 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
-import ClientWrapper from "../../components/ClientWrapper";
-
-const inter = Inter({ subsets: ["latin"] });
+import ClientWrapper from "../../components/wrappers/ClientWrapper";
 
 export const metadata = {
   title: "Bruno Bilandzic Personal Website",

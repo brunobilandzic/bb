@@ -1,9 +1,13 @@
 "use client";
 
 import axios from "axios";
+import LoadingWrapper from "./wrappers/LoadingWrapper";
 
-const { useSession } = require("next-auth/react");
-const { useEffect, useState } = require("react");
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { breakLoading, setLoading } from "../redux/slices/loadingSlice";
+import { setPosts, addPost } from "../redux/slices/postsSlice";
 
 const defaultPost = {
   title: "",
@@ -12,20 +16,26 @@ const defaultPost = {
 };
 
 const PostsList = () => {
-  const [posts, setPosts] = useState([]);
+  const posts = useSelector((state) => state.postsState?.items);
+  const dispatch = useDispatch();
 
   const fetchPosts = async () => {
-    const response = await axios.get("/api/posts");
+    dispatch(setLoading());
 
-    setPosts(response.data);
+    const response = await axios.get("/api/posts");
+    dispatch(setPosts(response.data?.posts));
+    
+    dispatch(breakLoading());
   };
 
   return (
-    <div>
-      <div>posts list</div>
-      <div>{JSON.stringify(posts)}</div>
-      <button onClick={fetchPosts}>Fetch posts</button>
-    </div>
+    <LoadingWrapper>
+      <div>
+        <div>posts list</div>
+        <div>{JSON.stringify(posts)}</div>
+        <button onClick={fetchPosts}>Fetch posts</button>
+      </div>
+    </LoadingWrapper>
   );
 };
 
