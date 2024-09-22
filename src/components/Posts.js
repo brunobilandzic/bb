@@ -28,6 +28,10 @@ const PostsList = () => {
     dispatch(breakLoading());
   };
 
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
   return (
     <LoadingWrapper>
       <div>
@@ -41,8 +45,9 @@ const PostsList = () => {
 
 const NewPost = () => {
   const [newPost, setNewPost] = useState(defaultPost);
-
+  const dispatch = useDispatch();
   const { data: session } = useSession();
+  const user = useSelector((state) => state.userState.user);
 
   const handleChange = (e) => {
     setNewPost({ ...newPost, [e.target.name]: e.target.value });
@@ -50,55 +55,63 @@ const NewPost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    dispatch(setLoading());
     if (!newPost.title || !newPost.content) {
+      dispatch(breakLoading());
       return;
     }
 
-    if (!session && !newPost.creator) {
+    if (!session && !newPost.username) {
+      dispatch(breakLoading());
       return;
     }
 
     const response = await axios.post("/api/posts", {
       ...newPost,
-      creator: session ? session.user.email : newPost.creator,
-      logedIn: session ? true : false,
     });
 
+    console.log(response.data);
+
+    dispatch(breakLoading());
+    dispatch(addPost(response.data.newPost));
     setNewPost(defaultPost);
   };
 
   return (
-    <div className="w-full flex flex-col items-center gap-5">
-      <div className="flex flex-col gap-4 items-center">
-        <p className="text-xl font-bold w-fit ">New Post</p>
-        <input
-          type="text"
-          name="title"
-          value={newPost.title}
-          onChange={handleChange}
-          placeholder="Title"
-        />
-        <textarea
-          name="content"
-          value={newPost.content}
-          onChange={handleChange}
-          placeholder="Content"
-        />
-        {!session && (
-          <input
-            type="text"
-            name="creator"
-            value={newPost.creator}
-            onChange={handleChange}
-            placeholder="Creator"
-          />
-        )}
-      </div>
-      <button className="border border-black w-fit" onClick={handleSubmit}>
-        Submit
-      </button>
-    </div>
+    <>
+      <LoadingWrapper>
+        <div className="w-full flex flex-col items-center gap-5">
+          <div className="flex flex-col gap-4 items-center">
+            <p className="text-xl font-bold w-fit ">New Post</p>
+            <input
+              type="text"
+              name="title"
+              value={newPost.title}
+              onChange={handleChange}
+              placeholder="Title"
+            />
+            <textarea
+              name="content"
+              value={newPost.content}
+              onChange={handleChange}
+              placeholder="Content"
+            />
+            {!session && (
+              <input
+                type="text"
+                name="username"
+                value={newPost.username}
+                onChange={handleChange}
+                placeholder="Username"
+              />
+            )}
+          </div>
+          <button className="border border-black w-fit" onClick={handleSubmit}>
+            Submit
+          </button>
+        </div>
+      </LoadingWrapper>
+    </>
   );
 };
 

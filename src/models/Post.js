@@ -4,12 +4,12 @@ const postSchema = {
   title: { type: String, required: true },
   content: { type: String, required: true },
   likes: { type: [mongoose.Schema.Types.ObjectId], ref: "UserPW" },
-  creator: {
+  creatorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "UserPW",
-    required: true,
   },
   logedIn: { type: Boolean, required: true },
+  username: { type: String },
 };
 
 const PostSchema = new mongoose.Schema(postSchema);

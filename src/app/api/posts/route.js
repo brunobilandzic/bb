@@ -19,19 +19,17 @@ export async function POST(req) {
 
   const session = await getServerSession(authOptions);
 
-  console.log("session: ", session);
-
   if (session) {
     const userPw = await UserPW.findOne({ email: session.user.email });
 
     if (!userPw) {
       return NextResponse.json({ error: "User not found" });
     }
-    console.log("userPw: ", userPw);
 
     const newPost = await Post.create({
       ...body,
-      creator: userPw._id,
+      creatorId: userPw._id,
+      username: userPw.email.split("@")[0],
       logedIn: true,
     });
 
@@ -43,8 +41,8 @@ export async function POST(req) {
     return NextResponse.json({ newPost });
   }
 
-  if (!body.creator) {
-    return NextResponse.json({ error: "Creator not provided" });
+  if (!body.username) {
+    return NextResponse.json({ error: "Username not provided" });
   }
 
   const newPost = await Post.create({ ...body, logedIn: false });
