@@ -1,9 +1,7 @@
-import Posts from "../../components/Posts";
-import AuthSection from "../../components/Auth";
-
+import Posts from "../components/Posts";
+import AuthSection from "../components/Auth";
 
 export default function Home() {
-  
   return (
     <main className="flex min-h-screen flex-col items-center justify-start gap-4 p-24">
       <h1 className="text-4xl font-bold">

@@ -1,5 +1,5 @@
 import "./globals.css";
-import ClientWrapper from "../../components/wrappers/ClientWrapper";
+import ClientWrapper from "../components/wrappers/ClientWrapper";
 
 export const metadata = {
   title: "Bruno Bilandzic Personal Website",

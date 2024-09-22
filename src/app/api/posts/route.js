@@ -1,9 +1,9 @@
-import dbConnect from "../../../../lib/mongooseConnect";
-import Post from "../../../../models/Post";
+import dbConnect from "../../../lib/mongooseConnect";
+import Post from "../../../models/Post";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../../../../lib/authOptions";
-import UserPW from "../../../../models/User";
+import { authOptions } from "../../../lib/authOptions";
+import UserPW from "../../../models/User";
 
 export async function GET(req) {
   await dbConnect();

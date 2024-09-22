@@ -24,7 +24,7 @@ const PostsList = () => {
 
     const response = await axios.get("/api/posts");
     dispatch(setPosts(response.data?.posts));
-    
+
     dispatch(breakLoading());
   };
 
