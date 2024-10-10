@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReactTimeAgo from "react-time-ago";
 import TimeAgo from "javascript-time-ago";
+import { MdOutlineNoteAdd } from "react-icons/md";
+import { MdBackspace } from "react-icons/md";
 
 import en from "javascript-time-ago/locale/en";
 
@@ -45,19 +47,22 @@ const PostsList = () => {
   }, []);
 
   return (
-    <LoadingWrapper>
-      <div className="flex flex-col gap-5 items-beginningw-full">
-        {posts?.map((post) => (
-          <Post key={post._id} post={post} />
-        ))}
-      </div>
-    </LoadingWrapper>
+    <>
+      <LoadingWrapper>
+        <div className="flex flex-col gap-5 items-beginning w-full mt-3">
+          {posts?.map((post) => (
+            <Post key={post._id} post={post} />
+          ))}
+        </div>
+      </LoadingWrapper>
+    </>
   );
 };
 
 // NEW POST
 
 const NewPost = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [newPost, setNewPost] = useState(defaultPost);
   const dispatch = useDispatch();
   const { data: session } = useSession();
@@ -93,44 +98,51 @@ const NewPost = () => {
 
   return (
     <>
-      <LoadingWrapper>
-        <div className="flex flex-col items-center gap-5">
-          <div className="flex flex-col gap-4 items-center w-full ">
-            <p className="text-xl font-bold w-fit ">New Post</p>
-            <input
-              className="w-full pl-2 py-1 input"
-              type="text"
-              name="title"
-              value={newPost.title}
-              onChange={handleChange}
-              placeholder="Title"
-            />
-            <textarea
-              className=" p-2 rounded-md input"
-              name="content"
-              rows="8"
-              value={newPost.content}
-              onChange={handleChange}
-              placeholder="Content"
-            />
-            {!session && (
+      <div
+        className="flex items-center gap-2 text-2xl hover:cursor-pointer mb-3"
+        onClick={() => setIsOpen(!isOpen)}>
+        <div>{!isOpen && "New Post"}</div>
+        <div>{!isOpen ? <MdOutlineNoteAdd /> : <MdBackspace />}</div>
+      </div>
+      {isOpen && (
+        <LoadingWrapper>
+          <div className="flex flex-col items-center gap-5">
+            <div className="flex flex-col gap-4 items-center w-full ">
               <input
-                className="w-full"
+                className="w-full pl-2 py-1 input"
                 type="text"
-                name="username"
-                value={newPost.username}
+                name="title"
+                value={newPost.title}
                 onChange={handleChange}
-                placeholder="Username"
+                placeholder="Title"
               />
-            )}
+              <textarea
+                className=" p-2 rounded-md input"
+                name="content"
+                rows="8"
+                value={newPost.content}
+                onChange={handleChange}
+                placeholder="Content"
+              />
+              {!session && (
+                <input
+                  className="w-full"
+                  type="text"
+                  name="username"
+                  value={newPost.username}
+                  onChange={handleChange}
+                  placeholder="Username"
+                />
+              )}
+            </div>
+            <button
+              className="border border-black w-fit px-4 py-2 rounded-lg hover:shadow-md hover:bg-gray-200"
+              onClick={handleSubmit}>
+              Submit
+            </button>
           </div>
-          <button
-            className="border border-black w-fit px-4 py-2 rounded-lg hover:shadow-md hover:bg-gray-200"
-            onClick={handleSubmit}>
-            Submit
-          </button>
-        </div>
-      </LoadingWrapper>
+        </LoadingWrapper>
+      )}
     </>
   );
 };
@@ -172,7 +184,27 @@ export default function Posts() {
 //  BLOG
 
 export function BlogPosts() {
-  return <div>Blog Posts</div>;
+  const [blogPosts, setBlogPosts] = useState(null);
+
+  useEffect(() => {
+    if (blogPosts) return;
+    const fetchBlogPosts = async () => {
+      const response = await axios.get("/api/blog-posts");
+      setBlogPosts(response.data.blogPosts);
+    };
+
+    fetchBlogPosts();
+  }, [blogPosts]);
+
+  return (
+    <div>
+      <NewBlogPost />
+      <h1 className="text-2xl font-bolder mb-4">Welcome to Bruno's blog!</h1>
+      {blogPosts?.map((post) => (
+        <BlogPost key={post._id} {...post} />
+      ))}
+    </div>
+  );
 }
 
 function BlogPost({ createdAt, title, content }) {
@@ -184,6 +216,71 @@ function BlogPost({ createdAt, title, content }) {
     </div>
   );
 }
+
+const NewBlogPost = () => {
+  const [newBlogPost, setNewBlogPost] = useState({
+    title: "",
+    content: "",
+  });
+  const user = useSelector((state) => state.userState.user);
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (!user || !user.role == "ADMIN") return null;
+
+  const handleChange = (e) => {
+    setNewBlogPost({ ...newBlogPost, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(newBlogPost);
+
+    const response = await axios.post("/api/blog-posts", newBlogPost);
+    console.log(response.data);
+  };
+
+  return (
+    <>
+      <div
+        className="flex items-center gap-2 text-2xl hover:cursor-pointer mb-3"
+        onClick={() => setIsOpen(!isOpen)}>
+        <div>{!isOpen && "New Blog Post"}</div>
+        <div>{!isOpen ? <MdOutlineNoteAdd /> : <MdBackspace />}</div>
+      </div>
+      <div>
+        {isOpen && (
+          <LoadingWrapper>
+            <div className="flex flex-col items-center gap-5">
+              <div className="flex flex-col gap-4 items-center w-full ">
+                <input
+                  className="w-full pl-2 py-1 input"
+                  type="text"
+                  name="title"
+                  value={newBlogPost.title}
+                  onChange={handleChange}
+                  placeholder="Title"
+                />
+                <textarea
+                  className="p-2 rounded-md input"
+                  name="content"
+                  value={newBlogPost.content}
+                  onChange={handleChange}
+                  placeholder="Content"
+                  rows="8"
+                />
+              </div>
+              <button
+                className="border border-black w-fit px-4 py-2 rounded-lg hover:shadow-md hover:bg-gray-200"
+                onClick={handleSubmit}>
+                Submit
+              </button>
+            </div>
+          </LoadingWrapper>
+        )}
+      </div>
+    </>
+  );
+};
 
 //  ABOUT
 
@@ -199,7 +296,6 @@ function AboutItem({ title, content }) {
     </div>
   );
 }
-
 
 //  CONTACT
 

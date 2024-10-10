@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
       <html lang="en">
         <body className="flex min-h-screen flex-col items-center justify-start">
           <NavBar />
-          <div className="w-full  p-5"> {children}</div>
+          <div className="w-full  px-5"> {children}</div>
         </body>
       </html>
     </ClientWrapper>
