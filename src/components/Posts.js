@@ -6,8 +6,16 @@ import LoadingWrapper from "./wrappers/LoadingWrapper";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import ReactTimeAgo from "react-time-ago";
+import TimeAgo from "javascript-time-ago";
+
+import en from "javascript-time-ago/locale/en";
+
+TimeAgo.addDefaultLocale(en);
+
 import { breakLoading, setLoading } from "../redux/slices/loadingSlice";
 import { setPosts, addPost } from "../redux/slices/postsSlice";
+import { now } from "mongoose";
 
 const defaultPost = {
   title: "",
@@ -116,7 +124,7 @@ const NewPost = () => {
               />
             )}
           </div>
-          <button className="border border-black w-fit" onClick={handleSubmit}>
+          <button className="border border-black w-fit px-4 py-2 rounded-lg hover:shadow-md hover:bg-gray-200" onClick={handleSubmit}>
             Submit
           </button>
         </div>
@@ -130,11 +138,22 @@ const NewPost = () => {
 const Post = ({ post }) => {
   if (!post) return null;
 
+  const { username, title, content, createdAt } = post;
+
   return (
     <div>
-      <p className="text-gray-500 text-sm">{post.username}</p>
-      <h1 className="text-lg font-semibold">{post.title}</h1>
-      <p>{post.content}</p>
+      <p className="text-gray-500 text-sm">
+        {" "}
+        {new Date().getTime() - new Date(createdAt).getTime() <
+        1000 * 60 * 60 * 24 * 5 ? (
+          <ReactTimeAgo date={createdAt} locale="de" />
+        ) : (
+          new Date(createdAt).toLocaleString()
+        )}{" "}
+        | {username}
+      </p>
+      <h1 className="text-lg font-semibold">{title}</h1>
+      <p>{content}</p>
     </div>
   );
 };

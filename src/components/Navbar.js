@@ -23,6 +23,8 @@ const NavItems = () => {
       <NavItem href="/">Home</NavItem>
       <NavItem href="/posts">Posts</NavItem>
       <NavItem href="/blog">Blog</NavItem>
+      <NavItem href="/about">About</NavItem>
+      <NavItem href="/contact">Contact</NavItem>
     </div>
   );
 };
