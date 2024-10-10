@@ -124,7 +124,9 @@ const NewPost = () => {
               />
             )}
           </div>
-          <button className="border border-black w-fit px-4 py-2 rounded-lg hover:shadow-md hover:bg-gray-200" onClick={handleSubmit}>
+          <button
+            className="border border-black w-fit px-4 py-2 rounded-lg hover:shadow-md hover:bg-gray-200"
+            onClick={handleSubmit}>
             Submit
           </button>
         </div>
@@ -165,4 +167,42 @@ export default function Posts() {
       <PostsList />
     </>
   );
+}
+
+//  BLOG
+
+export function BlogPosts() {
+  return <div>Blog Posts</div>;
+}
+
+function BlogPost({ createdAt, title, content }) {
+  return (
+    <div>
+      <p className="text-sm text-gray-500">{createdAt}</p>
+      <h1 className="font-bold text-lg">{title}</h1>
+      <p>{content}</p>
+    </div>
+  );
+}
+
+//  ABOUT
+
+export function About() {
+  return <div>About</div>;
+}
+
+function AboutItem({ title, content }) {
+  return (
+    <div>
+      <p className="font-bold text-lg">{title}</p>
+      <p>{content}</p>
+    </div>
+  );
+}
+
+
+//  CONTACT
+
+export function Contact() {
+  return <div>Contact</div>;
 }
