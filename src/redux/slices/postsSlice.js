@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  items: [],
+  items: null,
 };
 
 const postsSlice = createSlice({
@@ -14,7 +14,10 @@ const postsSlice = createSlice({
     },
     addPost: (state, action) => {
       console.log("in add post action, payload:", action.payload);
-      state.items.push(action.payload);
+      if (!state.items) {
+        state.items = [];
+      }
+      state.items.unshift(action.payload);
     },
   },
 });

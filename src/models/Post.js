@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const postSchema = {
+  createdAt: { type: Date, default: Date.now },
   title: { type: String, required: true },
   content: { type: String, required: true },
   likes: { type: [mongoose.Schema.Types.ObjectId], ref: "UserPW" },

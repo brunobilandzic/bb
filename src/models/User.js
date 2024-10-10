@@ -7,6 +7,8 @@ const userSchema = {
   provider: { type: String, required: true },
   role: { type: String, required: true, default: "user" },
   posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post", default: [] }],
+  username: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
 };
 
 const UserSchema = new mongoose.Schema(userSchema);

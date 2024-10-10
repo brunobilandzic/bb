@@ -7,8 +7,7 @@ import UserPW from "../../../models/User";
 
 export async function GET(req) {
   await dbConnect();
-  const posts = await Post.find({});
-
+  const posts = await Post.find({}).sort({ createdAt: -1 });
   return NextResponse.json({ posts });
 }
 

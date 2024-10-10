@@ -32,6 +32,7 @@ export const authOptions = {
           image: user.image,
           provider: account.provider,
           role: user.email === process.env.ADMIN_EMAIL ? "admin" : "user",
+          username: user.email.split("@")[0],
         });
         await userFromDB.save();
       }

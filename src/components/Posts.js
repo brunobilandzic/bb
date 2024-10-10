@@ -15,11 +15,15 @@ const defaultPost = {
   creator: "",
 };
 
+// POSTS LIST
+
 const PostsList = () => {
   const posts = useSelector((state) => state.postsState?.items);
   const dispatch = useDispatch();
 
   const fetchPosts = async () => {
+    if (posts) return;
+
     dispatch(setLoading());
 
     const response = await axios.get("/api/posts");
@@ -34,14 +38,16 @@ const PostsList = () => {
 
   return (
     <LoadingWrapper>
-      <div>
-        <div>posts list</div>
-        <div>{JSON.stringify(posts)}</div>
-        <button onClick={fetchPosts}>Fetch posts</button>
+      <div className="flex flex-col gap-5 items-beginningw-full">
+        {posts?.map((post) => (
+          <Post key={post._id} post={post} />
+        ))}
       </div>
     </LoadingWrapper>
   );
 };
+
+// NEW POST
 
 const NewPost = () => {
   const [newPost, setNewPost] = useState(defaultPost);
@@ -80,10 +86,11 @@ const NewPost = () => {
   return (
     <>
       <LoadingWrapper>
-        <div className="w-full flex flex-col items-center gap-5">
-          <div className="flex flex-col gap-4 items-center">
+        <div className="flex flex-col items-center gap-5">
+          <div className="flex flex-col gap-4 items-center w-full ">
             <p className="text-xl font-bold w-fit ">New Post</p>
             <input
+              className="w-full pl-2 py-1 input"
               type="text"
               name="title"
               value={newPost.title}
@@ -91,13 +98,16 @@ const NewPost = () => {
               placeholder="Title"
             />
             <textarea
+              className=" p-2 rounded-md input"
               name="content"
+              rows="8"
               value={newPost.content}
               onChange={handleChange}
               placeholder="Content"
             />
             {!session && (
               <input
+                className="w-full"
                 type="text"
                 name="username"
                 value={newPost.username}
@@ -115,11 +125,25 @@ const NewPost = () => {
   );
 };
 
+// POST COMPONENTS
+
+const Post = ({ post }) => {
+  if (!post) return null;
+
+  return (
+    <div>
+      <p className="text-gray-500 text-sm">{post.username}</p>
+      <h1 className="text-lg font-semibold">{post.title}</h1>
+      <p>{post.content}</p>
+    </div>
+  );
+};
+
 export default function Posts() {
   return (
     <>
-      <PostsList />
       <NewPost />
+      <PostsList />
     </>
   );
 }
