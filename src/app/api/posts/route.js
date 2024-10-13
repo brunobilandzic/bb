@@ -7,7 +7,7 @@ import UserPW from "../../../models/User";
 
 export async function GET(req) {
   await dbConnect();
-  const posts = await Post.find({}).sort({ createdAt: -1 });
+  const posts = await Post.find({ type: "post" }).sort({ createdAt: -1 });
   return NextResponse.json({ posts });
 }
 
@@ -49,4 +49,30 @@ export async function POST(req) {
   await newPost.save();
 
   return NextResponse.json({ newPost });
+}
+
+export async function PATCH(req) {
+  await dbConnect();
+
+  const body = await req.json();
+
+  console.log(body);
+
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "User not authenticated" });
+  }
+
+  const post = await Post.findOne({ _id: body.postId });
+
+  if (!post) {
+    return NextResponse.json({ error: "Post not found" });
+  }
+
+  post.response = body.response;
+
+  await post.save();
+
+  return NextResponse.json({ post });
 }

@@ -25,7 +25,16 @@ const defaultPost = {
   creator: "",
 };
 
-// POSTS LIST
+// POSTS
+
+export function Posts() {
+  return (
+    <>
+      <NewPost />
+      <PostsList />
+    </>
+  );
+}
 
 const PostsList = () => {
   const posts = useSelector((state) => state.postsState?.items);
@@ -51,15 +60,13 @@ const PostsList = () => {
       <LoadingWrapper>
         <div className="flex flex-col gap-5 items-beginning w-full mt-3">
           {posts?.map((post) => (
-            <Post key={post._id} post={post} />
+            <Post key={post._id} {...post} />
           ))}
         </div>
       </LoadingWrapper>
     </>
   );
 };
-
-// NEW POST
 
 const NewPost = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -88,8 +95,6 @@ const NewPost = () => {
     const response = await axios.post("/api/posts", {
       ...newPost,
     });
-
-    console.log(response.data);
 
     dispatch(breakLoading());
     dispatch(addPost(response.data.newPost));
@@ -147,39 +152,106 @@ const NewPost = () => {
   );
 };
 
-// POST COMPONENTS
+const Post = ({ username, title, content, createdAt, response, _id }) => {
+  const user = useSelector((state) => state.userState.user);
 
-const Post = ({ post }) => {
-  if (!post) return null;
-
-  const { username, title, content, createdAt } = post;
-
+  useEffect(() => {
+    console.log(_id);
+  }, [user]);
   return (
-    <div>
-      <p className="text-gray-500 text-sm">
-        {" "}
-        {new Date().getTime() - new Date(createdAt).getTime() <
-        1000 * 60 * 60 * 24 * 5 ? (
-          <ReactTimeAgo date={createdAt} locale="de" />
-        ) : (
-          new Date(createdAt).toLocaleString()
-        )}{" "}
-        | {username}
-      </p>
-      <h1 className="text-lg font-semibold">{title}</h1>
-      <p>{content}</p>
-    </div>
+    <>
+      <div>
+        <p className="text-gray-500 text-sm">
+          {" "}
+          {new Date().getTime() - new Date(createdAt).getTime() <
+          1000 * 60 * 60 * 24 * 5 ? (
+            <ReactTimeAgo date={createdAt} locale="de" />
+          ) : (
+            new Date(createdAt).toLocaleString()
+          )}{" "}
+          | {username}
+        </p>
+        <h1 className="text-lg font-semibold">{title}</h1>
+        <p>{content}</p>
+      </div>
+      <div>
+        {response?.length == 0 && user?.role != "admin" && (
+          <div>Bruno hasn&apos;t responded yet.</div>
+        )}
+        {response?.length == 0 && user?.role == "admin" && (
+          <NewResponse postId={_id} />
+        )}
+        {response?.length > 0 && (
+          <div>
+            <h1 className="text-sm font-semibold">Bruno&apos;s Response</h1>
+            <p>{response}</p>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
-export default function Posts() {
+// RESPONSE
+
+const NewResponse = ({ postId }) => {
+  const user = useSelector((state) => state.userState.user);
+  const [isOpen, setIsOpen] = useState(false);
+  const [response, setResponse] = useState("");
+  const dispatch = useDispatch();
+
+  if (!user) return;
+  if (!user.role == "ADMIN") return;
+
+  const handleChange = (e) => {
+    setResponse(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(setLoading());
+
+    const res = await axios.patch("/api/posts/", {
+      postId,
+      response,
+    });
+
+    console.log(res.data);
+
+    dispatch(breakLoading());
+  };
+
   return (
     <>
-      <NewPost />
-      <PostsList />
+      <div
+        className="flex items-center gap-2 text-2xl hover:cursor-pointer my-3"
+        onClick={() => setIsOpen(!isOpen)}>
+        <div>{!isOpen && "Write Response"}</div>
+        <div>{!isOpen ? <MdOutlineNoteAdd /> : <MdBackspace />}</div>
+      </div>
+      {isOpen && (
+        <LoadingWrapper>
+          
+          <div className="flex flex-col gap-2">
+            <input
+              className="p-2 rounded-md input"
+              name="response"
+              value={response}
+              onChange={handleChange}
+              placeholder="Response"
+            />
+            <button
+              className="border border-black w-fit px-4 py-2 rounded-lg hover:shadow-md hover:bg-gray-200"
+              onClick={handleSubmit}>
+              Submit
+            </button>
+          </div>
+          {" "}
+        </LoadingWrapper>
+      )}
     </>
   );
-}
+};
 
 //  BLOG
 
@@ -199,7 +271,9 @@ export function BlogPosts() {
   return (
     <div>
       <NewBlogPost />
-      <h1 className="text-2xl font-bolder mb-4">Welcome to Bruno's blog!</h1>
+      <h1 className="text-2xl font-bolder mb-4">
+        Welcome to Bruno&apos;s blog!
+      </h1>
       {blogPosts?.map((post) => (
         <BlogPost key={post._id} {...post} />
       ))}
@@ -233,10 +307,8 @@ const NewBlogPost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(newBlogPost);
 
     const response = await axios.post("/api/blog-posts", newBlogPost);
-    console.log(response.data);
   };
 
   return (

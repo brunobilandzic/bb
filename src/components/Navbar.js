@@ -39,28 +39,12 @@ const NavItem = ({ href, active, children }) => {
 
 const UserNav = () => {
   const user = useSelector((state) => state.userState.user);
-  const [username, setUsername] = useState(null);
-
-  useEffect(() => {
-    if (!user) return;
-    const assyncFunc = async () => {
-      const _username = await getUsername(user.email);
-      setUsername(_username);
-    };
-    assyncFunc();
-  }, [user]);
 
   return (
     <div className="self-end">
-      {username ? <LoggedIn username={username} /> : <NotLoggedIn />}
+      {user ? <LoggedIn username={user?.username} /> : <NotLoggedIn />}
     </div>
   );
-};
-
-export const getUsername = async (email) => {
-  const response = await axios.get("/api/user/username", { params: { email } });
-  console.log(response.data);
-  return response.data.username;
 };
 
 const NotLoggedIn = () => {
