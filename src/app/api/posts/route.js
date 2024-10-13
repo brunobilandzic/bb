@@ -7,7 +7,11 @@ import UserPW from "../../../models/User";
 
 export async function GET(req) {
   await dbConnect();
-  const posts = await Post.find({ type: "post" }).sort({ createdAt: -1 });
+
+  const type = req.nextUrl.searchParams.get("type");
+
+  const posts = await Post.find({ type }).sort({ createdAt: -1 });
+
   return NextResponse.json({ posts });
 }
 
@@ -27,9 +31,7 @@ export async function POST(req) {
 
     const newPost = await Post.create({
       ...body,
-      creatorId: userPw._id,
       username: userPw.email.split("@")[0],
-      logedIn: true,
     });
 
     userPw.posts.push(newPost._id);
@@ -41,10 +43,10 @@ export async function POST(req) {
   }
 
   if (!body.username) {
-    return NextResponse.json({ error: "Username not provided" });
+    body.username = "Anonymous";
   }
 
-  const newPost = await Post.create({ ...body, logedIn: false });
+  const newPost = await Post.create({ ...body });
 
   await newPost.save();
 
@@ -55,8 +57,6 @@ export async function PATCH(req) {
   await dbConnect();
 
   const body = await req.json();
-
-  console.log(body);
 
   const session = await getServerSession(authOptions);
 

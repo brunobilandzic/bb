@@ -19,7 +19,7 @@ export default function NavBar() {
 
 const NavItems = () => {
   return (
-    <div className="flex gap-5">
+    <div className="flex gap-5 text-xl">
       <NavItem href="/">Home</NavItem>
       <NavItem href="/posts">Posts</NavItem>
       <NavItem href="/blog">Blog</NavItem>
@@ -29,9 +29,9 @@ const NavItems = () => {
   );
 };
 
-const NavItem = ({ href, active, children }) => {
+const NavItem = ({ href, children }) => {
   return (
-    <div className="cursor-pointer">
+    <div className="cursor-pointer hover:text-green-50">
       {href ? <Link href={href}>{children}</Link> : children}
     </div>
   );

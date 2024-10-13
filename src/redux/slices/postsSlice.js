@@ -9,19 +9,25 @@ const postsSlice = createSlice({
   initialState,
   reducers: {
     setPosts: (state, action) => {
-      console.log(action);
       state.items = action.payload;
     },
     addPost: (state, action) => {
-      console.log("in add post action, payload:", action.payload);
       if (!state.items) {
         state.items = [];
       }
       state.items.unshift(action.payload);
     },
+    newResponse: (state, action) => {
+      state.items = state.items.map((post) => {
+        if (post._id === action.payload.postId) {
+          post.response = action.payload.response;
+        }
+        return post;
+      });
+    },
   },
 });
 
-export const { setPosts, addPost } = postsSlice.actions;
+export const { setPosts, addPost, newResponse } = postsSlice.actions;
 
 export default postsSlice.reducer;
