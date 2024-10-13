@@ -149,12 +149,20 @@ const NewPost = () => {
   );
 };
 
-const Post = ({ username, title, content, createdAt, response, _id }) => {
+const Post = ({
+  username,
+  title,
+  content,
+  createdAt,
+  response,
+  _id,
+  blogPost,
+}) => {
   const user = useSelector((state) => state.userState.user);
 
   return (
-    <>
-      <div>
+    <div className="bg-neutral-300 border-l-8 border-neutral-400 pl-3">
+      <div className="mb-4">
         <p className="text-gray-500 text-sm">
           {" "}
           {new Date().getTime() - new Date(createdAt).getTime() <
@@ -165,24 +173,28 @@ const Post = ({ username, title, content, createdAt, response, _id }) => {
           )}{" "}
           | {username}
         </p>
-        <h1 className="text-lg font-semibold">{title}</h1>
+        <h1 className="text-lg font-semibold underline-offset-2 underline">
+          {title}
+        </h1>
         <p>{content}</p>
       </div>
-      <div>
-        {response?.length == 0 && user?.role != "admin" && (
-          <div>Bruno hasn&apos;t responded yet.</div>
-        )}
-        {response?.length == 0 && user?.role == "admin" && (
-          <NewResponse postId={_id} />
-        )}
-        {response?.length > 0 && (
-          <div>
-            <h1 className="text-sm font-semibold">Bruno&apos;s Response</h1>
-            <p>{response}</p>
-          </div>
-        )}
-      </div>
-    </>
+      {!blogPost && (
+        <div>
+          {response?.length == 0 && user?.role != "admin" && (
+            <div>Bruno hasn&apos;t responded yet.</div>
+          )}
+          {response?.length == 0 && user?.role == "admin" && (
+            <NewResponse postId={_id} />
+          )}
+          {response?.length > 0 && (
+            <div>
+              <h1 className="text-sm font-semibold">Bruno&apos;s Response:</h1>
+              <p>{response}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -275,7 +287,7 @@ export function BlogPosts() {
         Welcome to Bruno&apos;s blog!
       </h1>
       {blogPosts?.map((post) => (
-        <BlogPost key={post._id} {...post} />
+        <Post blogPost key={post._id} {...post} />
       ))}
     </div>
   );

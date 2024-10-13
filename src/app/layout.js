@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <ClientWrapper>
       <html lang="en">
-        <body className="flex min-h-screen flex-col items-center justify-start">
+        <body className="flex min-h-screen flex-col items-center justify-start pb-7">
           <NavBar />
           <div className="w-full  px-5"> {children}</div>
         </body>
