@@ -29,7 +29,7 @@ export default function AuthWrapper({ children }) {
       dispatch(logout());
       console.log("AuthWrapper logging user out of redux global state");
     }
-  }, [session]);
+  });
 
   return children;
 }
