@@ -157,13 +157,14 @@ const Post = ({
   response,
   _id,
   blogPost,
+  aboutPost,
 }) => {
   const user = useSelector((state) => state.userState.user);
 
   return (
     <div className="bg-neutral-300 border-l-8 border-neutral-400 pl-3">
       <div className="mb-4">
-        <p className="text-gray-500 text-sm">
+        {!aboutPost && <p className="text-gray-500 text-sm">
           {" "}
           {new Date().getTime() - new Date(createdAt).getTime() <
           1000 * 60 * 60 * 24 * 5 ? (
@@ -172,13 +173,13 @@ const Post = ({
             new Date(createdAt).toLocaleString()
           )}{" "}
           | {username}
-        </p>
+        </p>}
         <h1 className="text-lg font-semibold underline-offset-2 underline">
           {title}
         </h1>
         <p>{content}</p>
       </div>
-      {!blogPost && (
+      {!blogPost && !aboutPost && (
         <div>
           {response?.length == 0 && user?.role != "admin" && (
             <div>Bruno hasn&apos;t responded yet.</div>
@@ -293,23 +294,6 @@ export function BlogPosts() {
   );
 }
 
-function BlogPost({ createdAt, title, content }) {
-  return (
-    <div>
-      <p className="text-sm text-gray-500">
-        {new Date().getTime() - new Date(createdAt).getTime() <
-        1000 * 60 * 60 * 24 * 5 ? (
-          <ReactTimeAgo date={createdAt} locale="de" />
-        ) : (
-          new Date(createdAt).toLocaleString()
-        )}
-      </p>
-      <h1 className="font-bold text-lg">{title}</h1>
-      <p>{content}</p>
-    </div>
-  );
-}
-
 const NewBlogPost = () => {
   const [newBlogPost, setNewBlogPost] = useState({
     title: "",
@@ -380,18 +364,102 @@ const NewBlogPost = () => {
 
 //  ABOUT
 
-export function About() {
-  return <div>About</div>;
-}
+export function AboutComponent() {
+  const [aboutPosts, setAboutPosts] = useState(null);
+  const user = useSelector((state) => state.userState.user);
 
-function AboutItem({ title, content }) {
+  useEffect(() => {
+    if (aboutPosts) return;
+    const fetchAboutPosts = async () => {
+      const response = await axios.get("/api/posts", {
+        params: { type: "about-section" },
+      });
+      setAboutPosts(response.data.posts);
+    };
+
+    fetchAboutPosts();
+  }, [aboutPosts]);
   return (
     <div>
-      <p className="font-bold text-lg">{title}</p>
-      <p>{content}</p>
+      <NewAboutPost />
+      <LoadingWrapper>
+        <div className="flex flex-col gap-5 items-beginning w-full mt-3">
+          {aboutPosts?.map((post) => (
+            <Post key={post._id} {...post} aboutPost />
+          ))}
+        </div>
+      </LoadingWrapper>
     </div>
   );
 }
+
+const NewAboutPost = () => {
+  const user = useSelector((state) => state.userState.user);
+  const [newAboutPost, setNewAboutPost] = useState({
+    title: "",
+    content: "",
+  });
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (!user || !user.role == "ADMIN") return null;
+
+  const handleChange = (e) => {
+    setNewAboutPost({ ...newAboutPost, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const response = await axios.post("/api/posts", {
+      ...newAboutPost,
+      type: "about-section",
+    });
+
+    console.log(response.data);
+  };
+
+  return (
+    <>
+      <div
+        className="flex items-center gap-2 text-2xl hover:cursor-pointer mb-3"
+        onClick={() => setIsOpen(!isOpen)}>
+        <div>{!isOpen && "New About Section"}</div>
+        <div>{!isOpen ? <MdOutlineNoteAdd /> : <MdBackspace />}</div>
+      </div>
+      <div>
+        {isOpen && (
+          <LoadingWrapper>
+            <div className="flex flex-col items-center gap-5">
+              <div className="flex flex-col gap-4 items-center w-full ">
+                <input
+                  className="w-full pl-2 py-1 input"
+                  type="text"
+                  name="title"
+                  value={newAboutPost.title}
+                  onChange={handleChange}
+                  placeholder="Title"
+                />
+                <textarea
+                  className="p-2 rounded-md input"
+                  name="content"
+                  value={newAboutPost.content}
+                  onChange={handleChange}
+                  placeholder="Content"
+                  rows="8"
+                />
+              </div>
+              <button
+                className="border border-black w-fit px-4 py-2 rounded-lg hover:shadow-md hover:bg-gray-200"
+                onClick={handleSubmit}>
+                Submit
+              </button>
+            </div>
+          </LoadingWrapper>
+        )}
+      </div>
+    </>
+  );
+};
 
 //  CONTACT
 
