@@ -10,7 +10,7 @@ import { FaGoogle } from "react-icons/fa";
 
 export default function NavBar() {
   return (
-    <div className="flex w-full justify-between items-center p-5">
+    <div className="flex w-full justify-between items-center p-5 h-fit">
       <NavItems />
       <UserNav />
     </div>
@@ -19,7 +19,7 @@ export default function NavBar() {
 
 const NavItems = () => {
   return (
-    <div className="flex gap-5 text-xl">
+    <div className="flex gap-2 text-xl">
       <NavItem href="/">Home</NavItem>
       <NavItem href="/posts">Posts</NavItem>
       <NavItem href="/blog">Blog</NavItem>
@@ -41,8 +41,8 @@ const UserNav = () => {
   const user = useSelector((state) => state.userState.user);
 
   return (
-    <div className="self-end">
-      {user ? <LoggedIn username={user?.username} /> : <NotLoggedIn />}
+    <div className="self h-full">
+      {user ? <LoggedIn /> : <NotLoggedIn />}
     </div>
   );
 };
@@ -57,11 +57,9 @@ const NotLoggedIn = () => {
   );
 };
 
-const LoggedIn = ({ username }) => {
+const LoggedIn = () => {
   return (
     <div className="flex gap-2">
-      <div className="font-semibold">{username}</div>
-
       <div onClick={() => signOut()}>
         <NavItem>Sign Out</NavItem>
       </div>

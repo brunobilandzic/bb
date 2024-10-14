@@ -474,7 +474,7 @@ const NewAboutPost = () => {
 export function ContactComponent() {
   return (
     <div>
-      <div className="flex gap-10 mt-5 text-4xl contact-icons justify-center px-20">
+      <div className="flex gap-4 mt-5 text-4xl contact-icons justify-center px-20">
         <a href="https://wa.me/385996786769" target="_blank">
           <MdWhatsapp />
         </a>
