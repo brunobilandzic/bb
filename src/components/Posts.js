@@ -8,8 +8,14 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReactTimeAgo from "react-time-ago";
 import TimeAgo from "javascript-time-ago";
-import { MdOutlineNoteAdd } from "react-icons/md";
+import { MdOutlineNoteAdd, MdWhatsapp } from "react-icons/md";
 import { MdBackspace } from "react-icons/md";
+import { MdOutlineWhatsapp } from "react-icons/md";
+import { MdFacebook } from "react-icons/md";
+import { FaInstagram } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+import { FaLinkedin } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 
 import en from "javascript-time-ago/locale/en";
 
@@ -164,16 +170,18 @@ const Post = ({
   return (
     <div className="bg-neutral-300 border-l-8 border-neutral-400 pl-3">
       <div className="mb-4">
-        {!aboutPost && <p className="text-gray-500 text-sm">
-          {" "}
-          {new Date().getTime() - new Date(createdAt).getTime() <
-          1000 * 60 * 60 * 24 * 5 ? (
-            <ReactTimeAgo date={createdAt} locale="de" />
-          ) : (
-            new Date(createdAt).toLocaleString()
-          )}{" "}
-          | {username}
-        </p>}
+        {!aboutPost && (
+          <p className="text-gray-500 text-sm">
+            {" "}
+            {new Date().getTime() - new Date(createdAt).getTime() <
+            1000 * 60 * 60 * 24 * 5 ? (
+              <ReactTimeAgo date={createdAt} locale="de" />
+            ) : (
+              new Date(createdAt).toLocaleString()
+            )}{" "}
+            | {username}
+          </p>
+        )}
         <h1 className="text-lg font-semibold underline-offset-2 underline">
           {title}
         </h1>
@@ -463,6 +471,36 @@ const NewAboutPost = () => {
 
 //  CONTACT
 
-export function Contact() {
-  return <div>Contact</div>;
+export function ContactComponent() {
+  return (
+    <div>
+      <div className="flex gap-10 mt-5 text-4xl contact-icons justify-center px-20">
+        <a href="https://wa.me/385996786769" target="_blank">
+          <MdWhatsapp />
+        </a>
+        <a href="https://www.facebook.com/bruno.bilandzic.14/" target="_blank">
+          <MdFacebook />
+        </a>
+        <a href="https://www.instagram.com/wolgabb/" target="_blank">
+          <FaInstagram />
+        </a>
+        <a href="mailto:bruno.bilandzic@outlook.com" target="_blank">
+          <MdEmail />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/bruno-biland%C5%BEi%C4%87-7906a21a9/"
+          target="_blank">
+          <FaLinkedin />
+        </a>
+        <a href="https://github.com/brunobilandzic" target="_blank">
+          <FaGithub />
+        </a>
+      </div>
+      <div>
+        <p className="text-center mt-5 font-semibold italic text-green-700">
+          CONSIDER GOING VEGAN FOR THE ANIMALS AND THE PLANET
+        </p>
+      </div>
+    </div>
+  );
 }
